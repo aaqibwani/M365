@@ -1,4 +1,4 @@
-﻿# PowerShell Script to Save Outlook Emails as .msg Files
+# PowerShell Script to Save Outlook Emails as .msg Files
 
 <#
 .SYNOPSIS
@@ -71,6 +71,9 @@ if (-not $outlook) {
     Write-Error "Could not connect to or start Outlook. Please ensure Outlook is installed."
     exit 1
 }
+
+# The Outlook COM object creation implicitly loads the necessary Interop assembly.
+# No explicit Add-Type -AssemblyName "Microsoft.Office.Interop.Outlook" is needed here.
 
 # Get MAPI namespace
 $namespace = $outlook.GetNamespace("MAPI")
@@ -180,8 +183,9 @@ if ($itemsToSave.Count -gt 0) {
                     $counter++
                 }
 
-                # Save the email as MSG format
-                $item.SaveAs($fullFilePath, [Microsoft.Office.Interop.Outlook.OlSaveAsType]::olMSG)
+                # Save the email as MSG format using the numeric value for olMSG (3)
+                $item.SaveAs($fullFilePath, 3) # Using 3 for olMSG
+
                 Write-Host "Saved: $fullFilePath"
                 $savedCount++
             }
